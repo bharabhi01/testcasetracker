@@ -1,6 +1,7 @@
 import React from "react";
-import { Table } from "semantic-ui-react";
+import { Table, Button } from "semantic-ui-react";
 import TestCaseItem from "../TestCaseItem/TestCaseItem";
+import { convertToCSV, downloadCSV } from "../../utils/csvUtils";
 
 function TestCaseList({
   testCases,
@@ -8,16 +9,33 @@ function TestCaseList({
   editTestCaseName,
   deleteTestCase,
 }) {
+  const handleExportToCSV = () => {
+    const csvContent = convertToCSV(testCases);
+    downloadCSV(csvContent, "test-cases.csv");
+  };
+
   return (
-    <Table celled>
+    <Table basic="very">
       <Table.Header>
         <Table.Row>
-          <Table.HeaderCell>Test Case</Table.HeaderCell>
-          <Table.HeaderCell>Dev (Before Merging)</Table.HeaderCell>
-          <Table.HeaderCell>Dev (After Merging)</Table.HeaderCell>
-          <Table.HeaderCell>Staging</Table.HeaderCell>
-          <Table.HeaderCell>Prod</Table.HeaderCell>
-          <Table.HeaderCell>Actions</Table.HeaderCell>
+          <Table.HeaderCell style={{ color: "#5c6470" }}>
+            Test Case
+          </Table.HeaderCell>
+          <Table.HeaderCell textAlign="center" style={{ color: "#5c6470" }}>
+            Dev (Before Merging)
+          </Table.HeaderCell>
+          <Table.HeaderCell textAlign="center" style={{ color: "#5c6470" }}>
+            Dev (After Merging)
+          </Table.HeaderCell>
+          <Table.HeaderCell textAlign="center" style={{ color: "#5c6470" }}>
+            Staging
+          </Table.HeaderCell>
+          <Table.HeaderCell textAlign="center" style={{ color: "#5c6470" }}>
+            Prod
+          </Table.HeaderCell>
+          <Table.HeaderCell textAlign="center" style={{ color: "#5c6470" }}>
+            Actions
+          </Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -30,6 +48,14 @@ function TestCaseList({
             deleteTestCase={deleteTestCase}
           />
         ))}
+
+        <Button
+          primary
+          icon="download"
+          onClick={handleExportToCSV}
+          content="Export to CSV"
+          style={{ marginTop: "10px" }}
+        />
       </Table.Body>
     </Table>
   );
