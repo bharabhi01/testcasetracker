@@ -3,6 +3,7 @@ import { supabase } from "../../clients/SupabaseClient";
 import { Container, Header, Segment } from "semantic-ui-react";
 import TestCaseForm from "../TestCaseForm/TestCaseForm";
 import TestCaseList from "../TestCaseList/TestCaseList";
+import "./TaskAdder.css";
 
 function TaskAdder() {
   const [testCases, setTestCases] = useState([]);
@@ -53,25 +54,6 @@ function TaskAdder() {
     }
   }
 
-  return (
-    <Container>
-      <Header as="h1" textAlign="center">
-        Test Case Tracker
-      </Header>
-      <Segment basic>
-        <TestCaseForm addTestCase={addTestCase} />
-      </Segment>
-      <Segment>
-        <TestCaseList
-          testCases={testCases}
-          updateTestCase={updateTestCase}
-          editTestCaseName={editTestCaseName}
-          deleteTestCase={deleteTestCase}
-        />
-      </Segment>
-    </Container>
-  );
-
   async function editTestCaseName(id, newName) {
     const { error } = await supabase
       .from("test_cases")
@@ -96,4 +78,27 @@ function TaskAdder() {
       setTestCases(testCases.filter((tc) => tc.id !== id));
     }
   }
+
+  return (
+    <>
+      <Header as="h1" textAlign="center">
+        Test Case Tracker
+      </Header>
+      <Container className="Main-box">
+        <Segment basic>
+          <TestCaseForm addTestCase={addTestCase} />
+        </Segment>
+        <Segment basic>
+          <TestCaseList
+            testCases={testCases}
+            updateTestCase={updateTestCase}
+            editTestCaseName={editTestCaseName}
+            deleteTestCase={deleteTestCase}
+          />
+        </Segment>
+      </Container>
+    </>
+  );
 }
+
+export default TaskAdder;

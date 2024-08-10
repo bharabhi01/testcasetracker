@@ -1,6 +1,6 @@
 import React from "react";
 import { Table } from "semantic-ui-react";
-import TestCaseItem from "./TestCaseItem";
+import TestCaseItem from "../TestCaseItem/TestCaseItem";
 
 function TestCaseList({
   testCases,

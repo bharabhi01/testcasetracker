@@ -9,7 +9,8 @@ function TestCaseForm({ addTestCase }) {
     if (name.trim()) {
       const newTestCase = {
         name,
-        dev: { completed: false, comment: "" },
+        dev_before: { completed: false, comment: "" },
+        dev_after: { completed: false, comment: "" },
         staging: { completed: false, comment: "" },
         prod: { completed: false, comment: "" },
       };
@@ -21,7 +22,7 @@ function TestCaseForm({ addTestCase }) {
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Field>
-        <label>Test Case Name</label>
+        <label style={{ color: "#5c6470" }}>Test Case Name</label>
         <input
           placeholder="Enter test case name"
           value={name}

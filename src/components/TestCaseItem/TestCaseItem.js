@@ -99,6 +99,80 @@ function TestCaseItem({
     setShowDeleteConfirm(false);
   };
 
+  const hasAdditionalInfo = (env) => {
+    return testCase[env]?.comment || testCase.jira_link || testCase.image_url;
+  };
+
+  const renderEnvironmentCell = (env) => (
+    <Table.Cell textAlign="center">
+      <Checkbox
+        checked={testCase[env].completed}
+        onChange={() => handleCheckboxChange(env)}
+      />
+      {hasAdditionalInfo(env) && (
+        <Popup
+          trigger={
+            <Icon
+              circular
+              name="info circle"
+              link
+              style={{ marginLeft: "10px" }}
+            />
+          }
+          on="click"
+          content={
+            <Table basic="very" celled collapsing>
+              <Table.Body>
+                {testCase[env].comment && (
+                  <Table.Row>
+                    <Table.Cell>
+                      <strong>Comment</strong>
+                    </Table.Cell>
+                    <Table.Cell>{testCase[env].comment}</Table.Cell>
+                  </Table.Row>
+                )}
+                {testCase.jira_link && (
+                  <Table.Row>
+                    <Table.Cell>
+                      <strong>Jira Link</strong>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <a
+                        href={testCase.jira_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {testCase.jira_link}
+                      </a>
+                    </Table.Cell>
+                  </Table.Row>
+                )}
+                {testCase.image_url && (
+                  <Table.Row>
+                    <Table.Cell>
+                      <strong>Image</strong>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Image src={testCase.image_url} size="small" />
+                    </Table.Cell>
+                  </Table.Row>
+                )}
+              </Table.Body>
+            </Table>
+          }
+          wide
+        />
+      )}
+      <Icon
+        circular
+        name="bug"
+        link
+        onClick={() => handleModalOpen(env)}
+        style={{ marginLeft: "10px" }}
+      />
+    </Table.Cell>
+  );
+
   return (
     <>
       <Table.Row>
@@ -130,12 +204,65 @@ function TestCaseItem({
         {renderEnvironmentCell("dev_after")}
         {renderEnvironmentCell("staging")}
         {renderEnvironmentCell("prod")}
-        <Table.Cell>
+        <Table.Cell textAlign="center">
           <Button icon="trash" color="red" onClick={handleDeleteClick} />
         </Table.Cell>
       </Table.Row>
 
-      {/* ... (keep the existing Modal) */}
+      <Modal open={openModal.open} onClose={handleModalClose}>
+        <Modal.Header>
+          Edit Details for{" "}
+          {openModal.env === "dev_before"
+            ? "Dev (Before Merging)"
+            : openModal.env === "dev_after"
+            ? "Dev (After Merging)"
+            : openModal.env}
+        </Modal.Header>
+        <Modal.Content>
+          <Form>
+            <Form.TextArea
+              label="Comment"
+              value={tempComment}
+              onChange={(e) => setTempComment(e.target.value)}
+              placeholder={`Enter comment for ${openModal.env} environment`}
+            />
+            <Form.Input
+              label="Jira Link"
+              placeholder="Enter Jira link"
+              value={tempJiraLink}
+              onChange={(e) => setTempJiraLink(e.target.value)}
+            />
+            <Form.Field>
+              <label>Image</label>
+              {testCase.image_url && (
+                <Image src={testCase.image_url} size="small" />
+              )}
+              <Button
+                as="label"
+                htmlFor="file"
+                type="button"
+                content="Choose File"
+                labelPosition="left"
+                icon="file"
+              />
+              <input
+                type="file"
+                id="file"
+                hidden
+                onChange={(e) => setImageFile(e.target.files[0])}
+                accept="image/*"
+              />
+              {imageFile && <p>Selected file: {imageFile.name}</p>}
+            </Form.Field>
+          </Form>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button onClick={handleModalClose}>Cancel</Button>
+          <Button positive onClick={handleSave}>
+            Save
+          </Button>
+        </Modal.Actions>
+      </Modal>
 
       <Confirm
         open={showDeleteConfirm}
